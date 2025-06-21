@@ -1,13 +1,13 @@
-# Offline‑RL Experiment Suite
+# Decision Trees vs. Ensembles in Regression‑Based Offline RL
 
-A practical and reproducible framework for the experiments in **“Lightweight Offline RL with Simple Regressors”** (2025). This repository collects code, configs and helper scripts to train decision‑tree and gradient‑boosted baselines on the [D4RL](https://github.com/rail-berkeley/d4rl) benchmarks.
+A practical and reproducible framework for the experiments described in “Decision Trees vs. Ensembles in Regression‑Based Offline RL” (Bachelor thesis, TU Delft, 2025). This repository collects code, configs and helper scripts to train decision‑tree and gradient‑boosted baselines on the [D4RL](https://github.com/rail-berkeley/d4rl) benchmarks.
 
 ---
 
 ## ✨ Features
 
 * **Single command‐line entry‑point** – `python -m main` wraps training, evaluation, result collection and plotting.
-* **Declarative experiment specs** – YAML (or Python) configs expand into full factorial grids of *model × env × seed × RTG strategy*.
+* **Declarative experiment specs** – YAML (or Python) configs expand into full factorial grids of *model × env × seed × RTG strategy*.
 * **Reproducible storage layout** – models and scores live under a predictable `models/{MODEL_CODE}/{ENV}/seed‑{N}/{RTG_SLUG}` tree.
 * **Zero‑boilerplate plotting** – built‑in scripts generate the paper figures (families, RTG sweeps, capacity tiers, …).
 * **Self‑contained model codes** – strings like `CART-D2L16-0-10-0` make huge hyper‑parameter grids reproducible without extra bookkeeping.
@@ -18,35 +18,13 @@ A practical and reproducible framework for the experiments in **“Lightweight O
 
 ```bash
 # Clone
-$ git clone <this‑repo‑url>
-$ cd offline‑rl‑suite
+$ git clone https://github.com/rae-ra/Decision-Trees-vs.-Ensembles-in-Regression-Based-Offline-RL
+$ cd Decision-Trees-vs.-Ensembles-in-Regression-Based-Offline-RL
 
-# Create env from template (≈ 5 min)
+# Create env from template
 $ conda env create -f environment.yml
-$ conda activate offline‑rl
+$ conda activate offline_rl_shallow_dt
 ```
-
-### Managing *environment.yml*
-
-The auto‑exported file can be verbose (>200 lines). Two common ways to trim it:
-
-1. **History‑only export** – captures just the packages you explicitly installed, not every transitive dep.
-
-   ```bash
-   conda env export --from-history > environment.yml
-   ```
-2. **Manual pruning** – keep top‑level libs (Gymnasium, D4RL, XGBoost, Scikit‑learn, Seaborn, etc.) and let users resolve the rest via *conda*.
-
-```bash
-# Clone
-$ git clone <this‑repo‑url>
-$ cd offline‑rl‑suite
-
-# Create env from template (≈ 5 min)
-$ conda env create -f environment.yml
-$ conda activate offline‑rl
-```
-
 ---
 
 ## 🗂 Repository layout
@@ -114,7 +92,7 @@ tasks:
 *YAML tips*
 
 * Use the short env codes (`HC-M`) or the full names (`halfcheetah-medium`) interchangeably.
-* Grids expand to **all** combinations, so the above spawns 2 × 2 × 2 × 1 = 8 tasks automatically.
+* Grids expand to **all** combinations, so the above spawns 2 × 2 × 2 × 1 = 8 tasks automatically.
 
 ---
 
@@ -132,11 +110,11 @@ XGB-{scale}-{n_estimators}
 | Token             | Meaning                                                       |
 | ----------------- | ------------------------------------------------------------- |
 | **CART / M‑CART** | Single‑ vs multi‑output decision tree                         |
-| **D**             | Max depth (0 → unlimited)                                     |
-| **L**             | Max leaf nodes (0 → unlimited)                                |
-| **scale**         | `1` = apply `StandardScaler` to observations, `0` = raw       |
+| **D**             | Max depth (0 → unlimited)                                     |
+| **L**             | Max leaf nodes (0 → unlimited)                                |
+| **scale**         | `1` = apply `StandardScaler` to observations, `0` = raw       |
 | **min\_leaf**     | Minimum samples per leaf                                      |
-| **alpha\_idx**    | Cost‑complexity pruning α index (0 → 0.0, 1 → 1e‑3, 2 → 1e‑2) |
+| **alpha\_idx**    | Cost‑complexity pruning α index (0 → 0.0, 1 → 1e‑3, 2 → 1e‑2) |
 | **n\_estimators** | Number of boosting rounds for XGBoost                         |
 
 ### TaskSpec runtime flags
@@ -155,7 +133,7 @@ These options let you checkpoint heavy sweeps, resume interrupted runs, or regen
 
 | Stage                | Command                                             | Description                                                  |
 | -------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
-| **Train + Eval**     | `python -m main run configs/halfcheetah_medium.yml` | Train each model and roll out *N* episodes per RTG strategy. |
+| **Train + Eval**     | `python -m main run configs/halfcheetah_medium.yml` | Train each model and roll out *N* episodes per RTG strategy. |
 | **Collect**          | `python -m main collect`                            | Aggregate raw `score.json` files into tidy CSV summaries.    |
 | **Plot**             | `python -m main plot --task families`               | Produce paper figures (saved under `plots/`).                |
 | **Clean**            | `python -m main delete --pattern CART-*`            | Delete artefacts that match a glob under `models/`.          |
@@ -165,8 +143,8 @@ These options let you checkpoint heavy sweeps, resume interrupted runs, or regen
 
 ## 🖼  Plotting tasks
 
-* `families` – Figure 2: score vs. environment grouped by model family.
-* `rtg` – Figure 3: RTG sweeps (needs `--models` and `--env` args).
+* `families` – Figure 2: score vs. environment grouped by model family.
+* `rtg` – Figure 3: RTG sweeps (needs `--models` and `--env` args).
 * `models` – Box‑plots comparing multiple model codes for one env.
 * `complexity_sweep` – Depth/leaf sweeps for CART‐style trees.
 * `capacity_tiers` – Paper appendix: capacity tiers breakdown.
@@ -187,4 +165,3 @@ All figures are dropped into the `plots/` folder unless `--out` is provided.
 ## License
 
 GNU General Public License v3.0 – see `LICENSE` for details.
-
